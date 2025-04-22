@@ -21,3 +21,21 @@ class Pie:
 
     def to_dict(self):
         return {"slices": self.slices}
+
+
+class Visualization:
+    def __init__(self, width, height, x, y, request):
+        self.width = width
+        self.height = height
+        self.x = x
+        self.y = y
+        self.request = request
+
+    def to_dict(self):
+        return {
+            "width": self.width,
+            "height": self.height,
+            "x": self.x,
+            "y": self.y,
+            "req": self.request,
+        }

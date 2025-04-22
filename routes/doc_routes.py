@@ -1,5 +1,6 @@
 from flask import Blueprint, jsonify, request
 import controllers.data_controller as data_controller
+import controllers.openai_controller as openai_controller
 from models.request_models import FromBlankRequest, FromAIRequest
 import mem_data
 
@@ -36,7 +37,18 @@ def get_doc():
     }
 
     if mem_data.create_type == "ai":
-        return "test"
+        return jsonify(
+            {
+                "entities": filtered_entities,
+                "data-types": data_types,
+                "visualizations": openai_controller.get_ai_charts(
+                    mem_data.create_request.entities,
+                    mem_data.create_request.prompt,
+                    mem_data.create_request.begin,
+                    mem_data.create_request.end,
+                ),
+            }
+        )
     elif mem_data.create_type == "blank":
         return jsonify(
             {

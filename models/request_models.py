@@ -6,6 +6,15 @@ class GraphRequest:
         self.data_points = data_points
         self.chart_type = chart_type
 
+    def to_dict(self):
+        return {
+            "id": self.ids,
+            "type": self.data_type,
+            "range": self.range,
+            "data-points": self.data_points,
+            "chartType": self.chart_type,
+        }
+
 
 class GraphReturn:
     def __init__(self, title, chart_type, chart_model_data):

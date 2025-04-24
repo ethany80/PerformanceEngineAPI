@@ -1,4 +1,5 @@
 from flask import Blueprint, jsonify, request
+from flask_cors import cross_origin
 import controllers.data_controller as data_controller
 from models.request_models import GraphRequest, GraphReturn
 from models.chart_models import Bar, Line, Pie
@@ -6,7 +7,8 @@ from models.chart_models import Bar, Line, Pie
 graph_routes = Blueprint("graph", __name__, url_prefix="/api")
 
 
-@graph_routes.route("/graph", methods=["GET"])
+@graph_routes.route("/graph", methods=["POST"])
+@cross_origin()
 def graph():
     request_data = request.get_json()
 
@@ -14,7 +16,7 @@ def graph():
         ids=request_data.get("id"),
         data_type=request_data.get("type"),
         range=request_data.get("range"),
-        data_points=request_data.get("data-points"),
+        data_points=request_data.get("dataPoints"),
         chart_type=request_data.get("chartType"),
     )
 
@@ -27,11 +29,15 @@ def graph():
 
     if graph_request.chart_type == "table":
         return jsonify(
-            data_controller.get_table_values(
-                ids,
-                graph_request.range[0],
-                graph_request.range[1],
-                entity_type,
+            GraphReturn(
+                title="Overall Performance",
+                chart_type="table",
+                chart_model_data=data_controller.get_table_values(
+                    ids,
+                    graph_request.range[0],
+                    graph_request.range[1],
+                    entity_type,
+                ),
             ).to_dict()
         )
 
@@ -68,22 +74,22 @@ def graph():
         )
 
     if graph_request.data_type in ["Market Value", "Return"]:
-        if graph_request.chart_type == "bar":
+        if graph_request.chart_type == "bar-unused":
             return jsonify(
                 GraphReturn(
                     title=f"{chart_data_set.chart_data_list[0].name} {graph_request.data_type}",
-                    chart_type="bar",
+                    chart_type="bar-unused",
                     chart_model_data=Bar(
                         chart_data_set.dates,
                         chart_data_set.chart_data_list[0].values,
                     ),
                 ).to_dict()
             )
-        elif graph_request.chart_type == "multibar":
+        elif graph_request.chart_type == "bar":
             return jsonify(
                 GraphReturn(
                     title=graph_request.data_type,
-                    chart_type="multibar",
+                    chart_type="bar",
                     chart_model_data=Bar(
                         chart_data_set.dates,
                         {
@@ -93,11 +99,11 @@ def graph():
                     ),
                 ).to_dict()
             )
-        elif graph_request.chart_type == "line":
+        elif graph_request.chart_type == "line-unused":
             return jsonify(
                 GraphReturn(
                     title=f"{chart_data_set.chart_data_list[0].name} {graph_request.data_type}",
-                    chart_type="line",
+                    chart_type="line-unused",
                     chart_model_data=Line(
                         [
                             {"x": x, "y": y}
@@ -109,11 +115,11 @@ def graph():
                     ),
                 ).to_dict()
             )
-        elif graph_request.chart_type == "multiline":
+        elif graph_request.chart_type == "line":
             return jsonify(
                 GraphReturn(
                     title=graph_request.data_type,
-                    chart_type="multiline",
+                    chart_type="line",
                     chart_model_data=Line(
                         {
                             data.name: [

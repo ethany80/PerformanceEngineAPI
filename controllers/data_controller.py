@@ -8,7 +8,7 @@ from models.data_models import ChartData, ChartDataSet, TableData
 def get_multidate_market_value(ids, begin, end, num_points, entity_type):
     dates = [date.strftime("%m-%d-%Y") for date in get_dates(begin, end, num_points)]
 
-    ids_names = get_names(ids, entity_type)
+    ids_names = get_ids_names(ids, entity_type)
 
     chart_data_set = ChartDataSet(
         dates=dates,
@@ -36,7 +36,7 @@ def get_multidate_market_value(ids, begin, end, num_points, entity_type):
 def get_multidate_twr(ids, begin, end, num_points, entity_type):
     dates = [date.strftime("%m-%d-%Y") for date in get_dates(begin, end, num_points)]
 
-    ids_names = get_names(ids, entity_type)
+    ids_names = get_ids_names(ids, entity_type)
 
     chart_data_set = ChartDataSet(
         dates=dates,
@@ -90,7 +90,7 @@ def get_table_values(ids, begin, end, entity_type):
 
     headers = []
 
-    names = get_names(ids, entity_type)
+    names = [id_name[1] for id_name in get_ids_names(ids, entity_type)]
 
     if entity_type == "Pos":
         raw_table_values = get_position_table_values(ids, begin, end)
@@ -183,7 +183,7 @@ def get_dates(begin, end, num_dates):
     return [begin_date + i * delta for i in range(num_dates)]
 
 
-def get_names(ids, entity_type):
+def get_ids_names(ids, entity_type):
     if entity_type == "Pos":
         with SessionLocal() as session:
             result = session.execute(
@@ -207,7 +207,7 @@ def get_names(ids, entity_type):
             names = []
 
             for row in rows:
-                names.append(f"{row[1]}")
+                names.append((row[0], f"{row[1]}"))
 
             return names
     else:
@@ -232,7 +232,7 @@ def get_names(ids, entity_type):
             names = []
 
             for row in rows:
-                names.append(f"{row[1]} x{row[2][-4:]}")
+                names.append((row[0], f"{row[1]} x{row[2][-4:]}"))
 
             return names
 

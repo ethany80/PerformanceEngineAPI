@@ -45,9 +45,6 @@ def get_ai_charts(entities, prompt, begin, end):
         chart_type = chart_info["chart_type"]
         data_type = chart_info["data_type"]
 
-        if chart_type in ("bar", "line"):
-            chart_type = f"multi{chart_type}" if len(entities) > 1 else chart_type
-
         chart_requests.append(
             GraphRequest(
                 ids=entities,
@@ -62,15 +59,13 @@ def get_ai_charts(entities, prompt, begin, end):
 
     i = 0
 
-    y = 1000
-
     while i < len(chart_requests) - 1:
         visualizations.append(
             Visualization(
                 width=350,
                 height=250,
                 x=50,
-                y=y - (i * 150),
+                y=50 + i * 150,
                 request=chart_requests[i].to_dict(),
             ).to_dict()
         )
@@ -79,8 +74,8 @@ def get_ai_charts(entities, prompt, begin, end):
             Visualization(
                 width=350,
                 height=250,
-                x=400,
-                y=y - (i * 150),
+                x=450,
+                y=50 + i * 150,
                 request=chart_requests[i + 1].to_dict(),
             ).to_dict()
         )
@@ -90,10 +85,10 @@ def get_ai_charts(entities, prompt, begin, end):
     if chart_requests[len(chart_requests) - 1].chart_type == "table":
         visualizations.append(
             Visualization(
-                width=1000,
+                width=750,
                 height=350,
                 x=50,
-                y=400,
+                y=700,
                 request=chart_requests[len(chart_requests) - 1].to_dict(),
             ).to_dict()
         )
@@ -103,7 +98,7 @@ def get_ai_charts(entities, prompt, begin, end):
                 width=350,
                 height=250,
                 x=250,
-                y=400,
+                y=700,
                 request=chart_requests[len(chart_requests) - 1].to_dict(),
             ).to_dict()
         )

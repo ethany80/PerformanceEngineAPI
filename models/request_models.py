@@ -11,7 +11,7 @@ class GraphRequest:
             "id": self.ids,
             "type": self.data_type,
             "range": self.range,
-            "data-points": self.data_points,
+            "dataPoints": self.data_points,
             "chartType": self.chart_type,
         }
 

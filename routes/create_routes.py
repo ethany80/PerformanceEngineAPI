@@ -1,4 +1,5 @@
 from flask import Blueprint, jsonify, request
+from flask_cors import cross_origin
 import controllers.data_controller as data_controller
 from models.request_models import FromBlankRequest, FromAIRequest
 import mem_data
@@ -7,6 +8,7 @@ create_routes = Blueprint("create", __name__, url_prefix="/api")
 
 
 @create_routes.route("/from-blank", methods=["POST"])
+@cross_origin()
 def create_from_blank():
     request_data = request.get_json()
 
@@ -19,10 +21,11 @@ def create_from_blank():
 
     mem_data.create_request = from_blank_request
 
-    return jsonify({"message": "Success"}), 200
+    return jsonify({"layout": "layout-1"}), 201
 
 
 @create_routes.route("/from-ai", methods=["POST"])
+@cross_origin()
 def create_from_ai():
     request_data = request.get_json()
 
@@ -37,4 +40,4 @@ def create_from_ai():
 
     mem_data.create_request = from_ai_request
 
-    return jsonify({"message": "Success"}), 200
+    return jsonify({"layout": "layout-1"}), 201
